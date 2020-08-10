@@ -21,10 +21,9 @@ namespace HobbyInventory.Controllers
         [Route("")]
         public Hobby getHobby()
         {
-            return new Hobby { Id = 1 };
+            return new Hobby { Id = 1, Name="Fishing"};
         }
-
-
-
+       //update, add, remove, compare? for each....
+       //if time make a func that can change the category that a given product is in
     }
 }
