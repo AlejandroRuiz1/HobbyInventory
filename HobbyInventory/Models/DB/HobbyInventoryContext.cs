@@ -186,6 +186,7 @@ namespace HobbyInventory.Models.DB
             });
 
             OnModelCreatingPartial(modelBuilder);
+
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

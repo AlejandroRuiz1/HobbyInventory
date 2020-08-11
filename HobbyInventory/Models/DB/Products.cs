@@ -14,4 +14,11 @@ namespace HobbyInventory.Models.DB
 
         public virtual Hobby Hobby { get; set; }
     }
+
+    public enum Status
+    {
+        // out of stock, in stock, running low
+        //enum outOf
+    }
+
 }
