@@ -13,7 +13,6 @@ namespace HobbyInventory.Test
 
         }
 
-        [Theory]
 
     }
 }

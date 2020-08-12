@@ -17,25 +17,21 @@ namespace HobbyInventory.Models.DB
                 {
                     Id = 1,
                     Name = "Sports",
-                    HobbyId = 1
                 },
                 new Category
                 {
                     Id = 2,
                     Name = "Esports",
-                    HobbyId = 2
                 },
                 new Category
                 {
                     Id = 3,
                     Name = "Outdoors",
-                    HobbyId = 3
                 },
                 new Category
                 {
                     Id = 4,
                     Name = "Work",
-                    HobbyId = 4
                 }
                 );
             modelBuilder.Entity<Products>().HasData(

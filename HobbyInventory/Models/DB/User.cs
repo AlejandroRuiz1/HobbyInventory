@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace HobbyInventory.Models.DB
 {
-    public partial class Users
+    public partial class User
     {
+        [Key]
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
@@ -15,6 +17,6 @@ namespace HobbyInventory.Models.DB
         public string Phone { get; set; }
         public string EmailAddress { get; set; }
 
-        public virtual Orders Orders { get; set; }
+        public virtual Order Orders { get; set; }
     }
 }
