@@ -16,6 +16,7 @@ namespace HobbyInventory.Models.DB
         public int? Zipcode { get; set; }
         public string Phone { get; set; }
         public string EmailAddress { get; set; }
+        public bool IsRetired { get; set; }
 
         public virtual Order Orders { get; set; }
     }

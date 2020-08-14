@@ -9,75 +9,74 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HobbyInventory.Controllers
 {
-    [Route("api/hobbies")]
+    [Route("api/products")]
     [ApiController]
-    public class HobbyController : ControllerBase
+    public class ProductController : ControllerBase
     {
 
+
         [Route("")]
         [HttpGet]
-        public List<Hobby> GetHobbies([FromQuery] bool isRetired = false)
+        public List<Products> GetProducts([FromQuery] bool isRetired = false)
         {
             using (var context = new HobbyInventoryContext())
             {
-                var hobby = context.Hobby
-                    .Include(hobby => hobby.Products)
+                return context.Products
                     .Where(x => x.IsRetired == false || isRetired)
                     .ToList();
-
-
-                return hobby;
             }
         }
-
         [Route("")]
         [HttpPost]
-        public Hobby AddHobby(Hobby hobby)
+        public Products AddProduct(Products product)
         {
             using (var context = new HobbyInventoryContext())
             {
-                var newHobby = context.Hobby.Add(hobby).Entity;
+                var newProduct = context.Products.Add(product).Entity;
                 context.SaveChanges();
-                return newHobby;
+                return newProduct;
             }
         }
 
         [Route("{id}")]
         [HttpGet]
-        public Hobby GetHobby(int id)
+        public Products GetProduct(int id)
         {
             using (var context = new HobbyInventoryContext())
             {
-                return context.Hobby.Find(id);
+                return context.Products.Find(id);
             }
         }
-
         [Route("{id}")]
         [HttpDelete]
-        public Hobby RemoveHobby(int id)
+        public Products RemoveProduct(int id)
         {
             using (var context = new HobbyInventoryContext())
             {
-                var removed = context.Hobby.Find(id);
+                var removed = context.Products.Find(id);
                 removed.IsRetired = true;
-                context.SaveChanges();
                 return removed;
             }
         }
+
         [Route("{id}")]
         [HttpPatch]
-        public Hobby UpdateHobby(int id, Hobby updatedHobby)
+        public Products UpdateProduct(int id, Products updatedProduct)
         {
             using (var context = new HobbyInventoryContext())
             {
-                var hobby = context.Hobby.Find(id);
-                hobby.Name = updatedHobby.Name;
-                hobby.Products = updatedHobby.Products;
-                hobby.IsRetired = updatedHobby.IsRetired;
-                hobby.CategoryId = updatedHobby.CategoryId;
-                hobby.Category = updatedHobby.Category;
+                var hobby = context.Hobby.First(x => x.Name == updatedProduct.Hobby.Name);
+                //DTO
+                //
+                var product = context.Products.Find(id);
+                product.Name = updatedProduct.Name;
+                product.IsRetired = updatedProduct.IsRetired;
+                product.Quantity = updatedProduct.Quantity;
+                product.Status = updatedProduct.Status;
+                product.Price = updatedProduct.Price;
+                product.Hobby = hobby;
                 context.SaveChanges();
-                return hobby;
+                return product;
             }
         }
     }

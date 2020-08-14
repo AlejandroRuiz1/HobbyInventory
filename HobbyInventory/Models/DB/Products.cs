@@ -12,16 +12,20 @@ namespace HobbyInventory.Models.DB
         public string Name { get; set; }
         public int Quantity { get; set; }
         public int? Price { get; set; }
-        public string Status { get; set; }
+        public ProductStatus Status { get; set; }
         public int HobbyId { get; set; }
+        public bool IsRetired { get; set; }
         [ForeignKey("HobbyId")]
         public virtual Hobby Hobby { get; set; }
+        
     }
 
-    public enum Status
+    public enum ProductStatus
     {
-        // out of stock, in stock, running low
-        //enum outOf
+        out_of_stock,
+        running_low,
+        in_stock
+        
     }
 
 }

@@ -2,7 +2,7 @@
 
 namespace HobbyInventory.Migrations
 {
-    public partial class Initial : Migration
+    public partial class IntialMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -12,7 +12,8 @@ namespace HobbyInventory.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(nullable: true)
+                    Name = table.Column<string>(nullable: true),
+                    IsRetired = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -32,7 +33,8 @@ namespace HobbyInventory.Migrations
                     City = table.Column<string>(nullable: true),
                     Zipcode = table.Column<int>(nullable: true),
                     Phone = table.Column<string>(nullable: true),
-                    EmailAddress = table.Column<string>(nullable: true)
+                    EmailAddress = table.Column<string>(nullable: true),
+                    IsRetired = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -46,7 +48,8 @@ namespace HobbyInventory.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
-                    CategoryId = table.Column<int>(nullable: false)
+                    CategoryId = table.Column<int>(nullable: false),
+                    IsRetired = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -66,7 +69,7 @@ namespace HobbyInventory.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(nullable: false),
-                    Status = table.Column<string>(nullable: true),
+                    Status = table.Column<int>(nullable: false),
                     CreatedAt = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -89,8 +92,9 @@ namespace HobbyInventory.Migrations
                     Name = table.Column<string>(nullable: true),
                     Quantity = table.Column<int>(nullable: false),
                     Price = table.Column<int>(nullable: true),
-                    Status = table.Column<string>(nullable: true),
-                    HobbyId = table.Column<int>(nullable: false)
+                    Status = table.Column<int>(nullable: false),
+                    HobbyId = table.Column<int>(nullable: false),
+                    IsRetired = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -111,7 +115,8 @@ namespace HobbyInventory.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     OrderId = table.Column<int>(nullable: false),
                     ProductId = table.Column<int>(nullable: false),
-                    Quantity = table.Column<int>(nullable: false)
+                    Quantity = table.Column<int>(nullable: false),
+                    IsRetired = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -131,9 +136,23 @@ namespace HobbyInventory.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Categories_Name",
+                table: "Categories",
+                column: "Name",
+                unique: true,
+                filter: "[Name] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Hobby_CategoryId",
                 table: "Hobby",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Hobby_Name",
+                table: "Hobby",
+                column: "Name",
+                unique: true,
+                filter: "[Name] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrderItems_OrderId",
@@ -155,6 +174,13 @@ namespace HobbyInventory.Migrations
                 name: "IX_Products_HobbyId",
                 table: "Products",
                 column: "HobbyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_Name",
+                table: "Products",
+                column: "Name",
+                unique: true,
+                filter: "[Name] IS NOT NULL");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

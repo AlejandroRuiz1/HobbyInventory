@@ -13,9 +13,9 @@ namespace HobbyInventory.Models.DB
         [Key]
         public int Id { get; set; }
         public string Name { get; set; }
-
-        public virtual ICollection<Hobby> Hobbies { get; set; }
         public bool IsRetired { get; set; }
 
+        public virtual ICollection<Hobby> Hobbies { get; set; }
+        
     }
 }
