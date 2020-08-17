@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace HobbyInventory.Models.DTOs
 {
-    public class ProductDTO
+    public class HobbyDTO
     {
         public string Name { get; set; }
-        public int Quantity { get; set; }
-        public int? Price { get; set; }
-        public ProductStatus Status { get; set; }
-        public virtual HobbyDTO Hobby { get; set; }
+        public string CategoryName { get; set; }
+        public virtual CategoryDTO Category { get; set; }
+
+
+        public virtual IEnumerable<ProductDTO> Products { get; set; }
     }
 }

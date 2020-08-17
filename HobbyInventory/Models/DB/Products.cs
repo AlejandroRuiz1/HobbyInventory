@@ -12,6 +12,7 @@ namespace HobbyInventory.Models.DB
         public string Name { get; set; }
         public int Quantity { get; set; }
         public int? Price { get; set; }
+        [NotMapped]
         public ProductStatus Status { get; set; }
         public int HobbyId { get; set; }
         public bool IsRetired { get; set; }

@@ -16,7 +16,10 @@ namespace HobbyInventory.Models.DB
             modelBuilder.Entity<Category>()
                 .HasIndex(name =>name.Name)
                 .IsUnique();
-            
+
+            modelBuilder.Entity<Category>()
+                .HasIndex(b => b.Name);
+
             modelBuilder.Entity<Hobby>()
                 .HasIndex(name => name.Name)
                 .IsUnique();
