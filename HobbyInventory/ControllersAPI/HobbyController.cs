@@ -30,10 +30,7 @@ namespace HobbyInventory.Controllers
                 return hobbies.Select(hobby => new HobbyDTO
                 {
                     Name = hobby.Name,
-                    Category = new CategoryDTO
-                    {
-                        Name = hobby.Category.Name
-                    },
+                    CategoryName = hobby.Category.Name,
                     Products = hobby.Products.Select(product => new ProductDTO
                     {
                         Name = product.Name
@@ -50,19 +47,17 @@ namespace HobbyInventory.Controllers
             using (var context = new HobbyInventoryContext())
             {
                 var newHobby = context.Hobby.FirstOrDefault(hobbies => hobbies.Name == hobby.Name);
+                var category = context.Categories.First(c => c.Name == hobby.CategoryName);
                 if (newHobby != null)
                 {//it exists so we "add it"
                     newHobby.IsRetired = false;
+                    newHobby.CategoryId = category.Id;
+                    newHobby.Category = category;
                     context.SaveChanges();
                     return hobby;
                 }
                 else
                 {//it doesnt exist so we create/add it
-                    context.Categories.Add(new Category
-                    {
-                        Name = hobby.CategoryName
-                    });
-                    context.SaveChanges();
                     context.Hobby.Add(new Hobby
                     {
                         Name = hobby.Name,
@@ -85,12 +80,7 @@ namespace HobbyInventory.Controllers
                 return new HobbyDTO
                 {
                     Name = hobby.Name,
-                    Category = new CategoryDTO
-                    {
-
-                        Name = hobby.Category.Name
-
-                    }
+                    CategoryName = category.Name
                 };
 
             }
@@ -120,10 +110,7 @@ namespace HobbyInventory.Controllers
                     {
                         Name = p.Name
                     }),
-                    Category = new CategoryDTO
-                    {
-                        Name = removed.Category.Name
-                    }
+                    CategoryName = removed.Category.Name
                 };
             }
         }
@@ -135,7 +122,7 @@ namespace HobbyInventory.Controllers
             using (var context = new HobbyInventoryContext())
             {
                 var hobby = context.Hobby.Find(id);
-                var category = context.Categories.FirstOrDefault(c => c.Name == updatedHobby.Category.Name);
+                var category = context.Categories.FirstOrDefault(c => c.Name == updatedHobby.CategoryName);
 
                 if (!hobby.IsRetired)
                 {

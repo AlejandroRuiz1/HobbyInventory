@@ -11,6 +11,7 @@ namespace HobbyInventory.Models.DTOs
         public int Id { get; set; }
         public OrderStatus Status { get; set; }
         public string CreatedAt { get; set; }
-        public virtual User User { get; set; }
+        public string FirstName { get; set; }
+        public int UserId { get; set; }
     }
 }

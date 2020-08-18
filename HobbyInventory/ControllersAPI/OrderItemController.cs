@@ -58,7 +58,9 @@ namespace HobbyInventory.ControllersAPI
                         {
                             Order = order,
                             Product = product,
-                            Quantity = orderItem.Quantity
+                            Quantity = orderItem.Quantity,
+                            ProductId = product.Id,
+                            OrderId = order.Id
                             
                         });
                         context.SaveChanges();

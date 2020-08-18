@@ -10,8 +10,6 @@ namespace HobbyInventory.Models.DTOs
     {
         public string Name { get; set; }
         public string CategoryName { get; set; }
-        public virtual CategoryDTO Category { get; set; }
-
 
         public virtual IEnumerable<ProductDTO> Products { get; set; }
     }

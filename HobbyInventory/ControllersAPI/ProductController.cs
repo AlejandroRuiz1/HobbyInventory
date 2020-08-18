@@ -23,19 +23,16 @@ namespace HobbyInventory.Controllers
             using (var context = new HobbyInventoryContext())
             {
                 var products = context.Products
+                    .Include(h => h.Hobby)
                     .Where(x => x.IsRetired == false || isRetired)
                     .ToList();
-                return products.Select(product => new ProductDTO 
+                return products.Select(product => new ProductDTO
                 {
                     Name = product.Name,
                     Price = product.Price,
-                    Status = product.Status,
                     Quantity = product.Quantity,
-                    Hobby = new HobbyDTO
-                    {
-                        Name = product.Hobby.Name
-                    }
-                    
+                    HobbyName = product.Hobby.Name,
+                    Status = product.Status.ToString()
                 }).ToList();
             }
         }
@@ -43,34 +40,50 @@ namespace HobbyInventory.Controllers
         [HttpPost]
         public ProductDTO AddProduct(ProductDTO product)
         {
-            //Note: this doesn't to take into consideration if the Category, Hobby for which it is a part of is Retired
+            //we only all the addition of a product to a hobby. Nothing else can be added
             using (var context = new HobbyInventoryContext())
             {
                 var newProduct = context.Products.FirstOrDefault(p => p.Name == product.Name);
-                if (newProduct != null)
+                var hobby = context.Hobby.FirstOrDefault(h => h.Name == product.HobbyName);
+                var category = context.Categories.FirstOrDefault(c => c.Name == product.CategoryName);
+                if(category != null && !category.IsRetired)
                 {
-                    newProduct.IsRetired = false;
-                    newProduct.Price = product.Price;
-                    newProduct.Quantity = product.Quantity;
-                    newProduct.Status = product.Status;
-                    context.SaveChanges();
-                    return product;
+
+                    if(hobby != null && !hobby.IsRetired)
+                    {
+
+                        if(newProduct != null)
+                        {
+                            newProduct.Hobby = hobby;
+                            newProduct.HobbyId = hobby.Id;
+                            newProduct.Price = product.Price;
+                            newProduct.Quantity = product.Quantity;
+                            context.SaveChanges();
+                            return product;
+                        }
+                        else
+                        {
+                            context.Products.Add(new Products 
+                            {
+                                Name = product.Name,
+                                Price = product.Price,
+                                Hobby = hobby,
+                                HobbyId = hobby.Id,
+                                Quantity = product.Quantity
+                            });
+                            context.SaveChanges();
+                            return product;
+
+                        }
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
                 else
                 {
-                    context.Add(new Products
-                    {
-                        Name = product.Name,
-                        Price = product.Price,
-                        Status = product.Status,
-                        Quantity = product.Quantity,
-                        Hobby = new Hobby 
-                        {
-                            Name = product.Hobby.Name
-                        }
-                    });
-                    context.SaveChanges();
-                    return product;
+                    return null;
                 }
                 
             }
@@ -88,21 +101,10 @@ namespace HobbyInventory.Controllers
                 return new ProductDTO {
                     Name = product.Name,
                     Quantity = product.Quantity,
-                    Status = product.Status,
                     Price = product.Price,
-                    Hobby = new HobbyDTO
-                    {
-                        Name =  hobby.Name,
-                        //Products = hobby.Products.Select(p => new ProductDTO
-                        //{
-                        //    Name = p.Name,
-                        //    Status = p.Status,
-                        //    Price = p.Price,
-                        //    Quantity = p.Quantity
-                            
-                        //}),
-                        Category = new CategoryDTO { Name = hobby.Category.Name}
-                    }
+                    HobbyName =  hobby.Name,   
+                    CategoryName = hobby.Category.Name,
+                    Status = product.Status.ToString()
                 };
                 
             }
@@ -128,26 +130,40 @@ namespace HobbyInventory.Controllers
         public ProductDTO UpdateProduct(int id, ProductDTO updatedProduct)
         {
             using (var context = new HobbyInventoryContext())
-            {//something seems off but I don't know what related to product.Hobby = hobby;
-                var hobby = context.Hobby.First(x => x.Name == updatedProduct.Hobby.Name);
+            {
+                var hobby = context.Hobby.FirstOrDefault(x => x.Name == updatedProduct.HobbyName);
                 var product = context.Products.Find(id);
-
-                if (!product.IsRetired)
+                var category = context.Categories.FirstOrDefault(c => c.Name == updatedProduct.CategoryName);
+                if(category != null && !category.IsRetired)
                 {
-                    if(hobby != null)
+                    if(hobby != null && !hobby.IsRetired)
                     {
-                        product.Name = updatedProduct.Name;
-                        product.Quantity = updatedProduct.Quantity;
-                        product.Status = updatedProduct.Status;
-                        product.Price = updatedProduct.Price;
-                        product.Hobby = hobby;
-                        context.SaveChanges();
-                        return updatedProduct;
+                        if (!product.IsRetired)
+                        {
+                            product.Name = updatedProduct.Name;
+                            product.Hobby = hobby;
+                            product.HobbyId = hobby.Id;
+                            product.Price = updatedProduct.Price;
+                            product.Quantity = updatedProduct.Quantity;
+                            context.SaveChanges();
+                            return updatedProduct;
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                        
+                        
                     }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
                     return null;
                 }
-                
-                return null;
             }
         }
     }

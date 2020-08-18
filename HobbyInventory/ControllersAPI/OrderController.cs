@@ -1,4 +1,5 @@
 ﻿using HobbyInventory.Models.DB;
+using HobbyInventory.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -14,7 +15,7 @@ namespace HobbyInventory.ControllersAPI
     {
         [Route("")]
         [HttpGet]
-        public List<Order> GetOrders()
+        public List<OrderDTO> GetOrders()
         {
             using (var context = new HobbyInventoryContext())
             {
@@ -22,41 +23,64 @@ namespace HobbyInventory.ControllersAPI
                     .Include(order => order.User)
                     .ToList();
 
+                return order.Select(o => new OrderDTO 
+                {
+                    CreatedAt = o.CreatedAt,
+                    Id = o.Id,
+                    FirstName = o.User.FirstName,
+                    Status = o.Status
+                }).ToList();
+            }
+        }
+        
+        [Route("")]
+        [HttpPost]
+        public OrderDTO AddOrder(OrderDTO order)
+        {
+            using (var context = new HobbyInventoryContext())
+            {
+                var user = context.Users.Find(order.UserId);
+                context.Orders.Add(new Order 
+                {
+                    CreatedAt = order.CreatedAt,
+                    Id = order.Id,
+                    Status = order.Status,
+                    UserId = order.UserId,
+                    User = user
+                });
+                context.SaveChanges();
                 return order;
             }
         }
-        [Route("")]
-        [HttpPost]
-        public Order AddOrder(Order order)
-        {
-            using (var context = new HobbyInventoryContext())
-            {
-                var newOrder = context.Orders.Add(order).Entity;
-                context.SaveChanges();
-                return newOrder;
-            }
-        }
+
         [Route("{id}")]
         [HttpGet]
-        public Order GetOrder(int id)
-        {
-            using (var context = new HobbyInventoryContext())
-            {
-                return context.Orders.Find(id);
-            }
-        }
-         [Route("{id}")]
-        [HttpPatch]
-        public Order UpdateOrder(int id, Order updatedOrder)
+        public OrderDTO GetOrder(int id)
         {
             using (var context = new HobbyInventoryContext())
             {
                 var order = context.Orders.Find(id);
-                //order.Status = updatedOrder.Status;
-                order.User = updatedOrder.User;
-                order.UserId = updatedOrder.UserId;
+                return new OrderDTO
+                {
+                    CreatedAt = order.CreatedAt,
+                    FirstName = order.User.FirstName,
+                    Id = order.Id,
+                    Status = order.Status,
+                    UserId = order.UserId
+                };
+            }
+        }
+
+         [Route("{id}")]
+        [HttpPatch]
+        public OrderDTO UpdateOrder(int id, OrderDTO updatedOrder)
+        {
+            using (var context = new HobbyInventoryContext())
+            {//can only change the status of the order
+                var order = context.Orders.Find(id);
+                order.Status = updatedOrder.Status;
                 context.SaveChanges();
-                return order;
+                return updatedOrder;
             }
         }
     }

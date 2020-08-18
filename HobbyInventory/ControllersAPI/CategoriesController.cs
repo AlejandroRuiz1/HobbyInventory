@@ -8,6 +8,7 @@ using HobbyInventory.Models.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace HobbyInventory.ControllersAPI
 {
@@ -17,7 +18,7 @@ namespace HobbyInventory.ControllersAPI
     {
         [Route("")]
         [HttpGet]
-        public List<CategoryDTO> Categories([FromQuery] bool isRetired = false)
+        public List<CategoryDTO> GetCategories([FromQuery] bool isRetired = false)
         {
             using (var context = new HobbyInventoryContext())
             {
@@ -65,7 +66,7 @@ namespace HobbyInventory.ControllersAPI
         [Route("{id}")]
         [HttpPatch]
         public Category UpdateCategory(int id, Category updatedCategory)
-        {
+        {//this may to account for the hobbies being attached to it
             using (var context = new HobbyInventoryContext())
             {
                 var category = context.Categories.Find(id);
@@ -74,8 +75,13 @@ namespace HobbyInventory.ControllersAPI
                     category.Name = updatedCategory.Name;
                     category.IsRetired = updatedCategory.IsRetired;
                     context.SaveChanges();
+                    return updatedCategory;
                 }
-                return null;
+                else
+                {
+                    return null;
+                }
+                
             }
         }
 
@@ -84,15 +90,21 @@ namespace HobbyInventory.ControllersAPI
         public CategoryDTO RemoveCategory(int id)
         {
             using (var context = new HobbyInventoryContext())
-            {//set the chidlern to retired as well, later tho
+            {
                 
                 var removed = context.Categories.Find(id);
-                var hobbies = context.Hobby.Where(hobby => hobby.CategoryId == removed.Id).ToList();
+                var hobbies = context.Hobby.Where(hobby => hobby.CategoryId == removed.Id)
+                    .Include(h => h.Products)
+                    .ToList();
                 removed.IsRetired = true;
                 foreach (Hobby h in hobbies)
                 {
                         h.IsRetired = true;
-                }
+                        foreach(Products p in h.Products)
+                    {
+                        p.IsRetired = true;
+                    }
+                } 
                 context.SaveChanges();
 
                 return new CategoryDTO {

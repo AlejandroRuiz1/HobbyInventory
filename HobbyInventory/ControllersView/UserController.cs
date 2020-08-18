@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HobbyInventory.Controllers
 {
-    public class UsersController : Controller
+    public class UserController : Controller
     {
         // GET: UsersController
         public ActionResult Index()

@@ -10,8 +10,11 @@ namespace HobbyInventory.Models.DTOs
     {
         public string Name { get; set; }
         public int Quantity { get; set; }
-        public int? Price { get; set; }
-        public ProductStatus Status { get; set; }
-        public virtual HobbyDTO Hobby { get; set; }
+        public int Price { get; set; }
+        public string HobbyName { get; set; }
+        public string CategoryName { get; set; }
+        public string Status { get; set; }
+
+       
     }
 }
